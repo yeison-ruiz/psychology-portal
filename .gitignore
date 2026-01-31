@@ -7,3 +7,10 @@ dist
 out
 .vscode
 .idea
+
+# Security & Logs
+*.sql
+*.md
+!README.md
+!INSTRUCTIONS.md
+LOG_TRABAJO_HOY.md
