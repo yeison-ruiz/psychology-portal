@@ -313,10 +313,7 @@ export default function PortalDashboard() {
                       {item.type}
                     </h4>
                     <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-2 font-medium">
-                      {formatTime(item.scheduled_at)} •{" "}
-                      {item.status === "confirmed"
-                        ? "Videollamada"
-                        : "Presencial"}
+                      {formatTime(item.scheduled_at)} • Virtual
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
