@@ -1,6 +1,16 @@
 import { updateAppointmentStatus, deleteAppointment } from "../../actions";
-
-// ... existing imports ...
+import {
+  CalendarDaysIcon,
+  ClockIcon,
+  VideoCameraIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  ArrowPathIcon,
+  EnvelopeIcon,
+  PhoneIcon,
+  CalendarIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 
 export default function AppointmentDetailPage({
   params,
