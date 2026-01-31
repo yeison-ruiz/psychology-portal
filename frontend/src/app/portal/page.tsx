@@ -171,9 +171,19 @@ export default function PortalDashboard() {
         <div className="bg-white rounded-3xl p-3 shadow-sm border border-gray-100">
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Left Image Area or User Placeholder */}
-            <div className="h-56 lg:h-auto lg:w-[35%] bg-blue-50 rounded-2xl relative overflow-hidden flex items-center justify-center border border-blue-100">
-              <UserCircleIcon className="w-32 h-32 text-blue-200" />
-              <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-blue-900 text-[10px] font-extrabold uppercase tracking-widest px-4 py-1.5 rounded-md shadow-sm border border-blue-100">
+            <div className="h-56 lg:h-auto lg:w-[35%] bg-gradient-to-br from-[#F5F7FF] to-[#Eef2ff] rounded-2xl relative overflow-hidden flex items-center justify-center border border-indigo-50/50">
+              {/* Decorative background elements */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-100 rounded-full blur-2xl opacity-30 translate-y-1/2 -translate-x-1/2"></div>
+
+              <div className="bg-white p-6 rounded-full shadow-sm ring-8 ring-white/40 relative z-10">
+                <UserCircleIcon
+                  className="w-20 h-20 text-indigo-200"
+                  strokeWidth={1.5}
+                />
+              </div>
+
+              <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-indigo-900 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-sm border border-indigo-50 z-20">
                 Próxima Sesión
               </div>
             </div>
