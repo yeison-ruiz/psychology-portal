@@ -197,10 +197,19 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td className="px-8 py-4 text-right flex justify-end gap-2">
+                        <button
+                          onClick={() =>
+                            router.push(`/admin/solicitudes/${apt.id}`)
+                          }
+                          className="bg-gray-50 text-gray-600 px-3 py-1 rounded text-[10px] font-bold uppercase hover:bg-gray-100 transition-colors border border-gray-200 flex items-center gap-1"
+                        >
+                          👁️ Ver
+                        </button>
                         {apt.status === "pending" && (
                           <>
                             <button
-                              onClick={async () => {
+                              onClick={async (e) => {
+                                e.stopPropagation();
                                 if (!confirm("¿Confirmar esta cita?")) return;
                                 await updateAppointmentStatus(
                                   apt.id,
@@ -213,7 +222,8 @@ export default function AdminDashboard() {
                               Confirmar
                             </button>
                             <button
-                              onClick={async () => {
+                              onClick={async (e) => {
+                                e.stopPropagation();
                                 if (!confirm("¿Cancelar esta cita?")) return;
                                 await updateAppointmentStatus(
                                   apt.id,
