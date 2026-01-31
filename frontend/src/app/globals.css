@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+  /* Paleta "Organic Wellness" extraída de la referencia */
+  --primary-olive: #566452;    /* Verde musgo oscuro para botones/textos fuertes */
+  --secondary-sage: #8F9E8B;   /* Verde salvia suave para acentos */
+  --bg-cream: #FDFBF7;         /* Fondo principal, un blanco roto cálido */
+  --bg-sand: #F2EFE9;          /* Fondo secundario (secciones alternas) */
+  --text-dark: #2C2C2A;        /* Casi negro, pero más suave (charcoal) */
+  --accent-gold: #C0A062;      /* Dorado mate suave para detalles */
+}
+
+@theme inline {
+  --color-primary: var(--primary-olive);
+  --color-secondary: var(--secondary-sage);
+  --color-cream: var(--bg-cream);
+  --color-sand: var(--bg-sand);
+  --color-charcoal: var(--text-dark);
+  --color-gold: var(--accent-gold);
+  
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+}
+
+body {
+  background-color: var(--bg-cream);
+  color: var(--text-dark);
+}
+
+/* Utilidades personalizadas para imágenes */
+.image-mask-soft {
+  border-radius: 2rem;
+}
