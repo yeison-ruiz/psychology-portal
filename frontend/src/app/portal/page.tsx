@@ -174,7 +174,7 @@ export default function PortalDashboard() {
             {/* Left Image Area or User Placeholder */}
             <div className="h-56 lg:h-auto lg:w-[35%] bg-gray-100 rounded-2xl relative overflow-hidden group">
               <Image
-                src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2670&auto=format&fit=crop"
+                src="https://images.unsplash.com/photo-1605656816944-971cd5c1407f?q=80&w=2670&auto=format&fit=crop"
                 alt="Sesión Virtual"
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
