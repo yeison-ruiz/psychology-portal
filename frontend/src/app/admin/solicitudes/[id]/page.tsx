@@ -1,29 +1,6 @@
-"use client";
+import { updateAppointmentStatus, deleteAppointment } from "../../actions";
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-import {
-  CalendarDaysIcon,
-  ClockIcon,
-  VideoCameraIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  ArrowPathIcon,
-  EnvelopeIcon,
-  PhoneIcon,
-  CalendarIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
-
-// Helper to format currency
-const formatPrice = (amount: number) => {
-  return new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-    minimumFractionDigits: 0,
-  }).format(amount);
-};
+// ... existing imports ...
 
 export default function AppointmentDetailPage({
   params,
@@ -36,25 +13,10 @@ export default function AppointmentDetailPage({
   const supabase = createClient();
   const id = params.id;
 
-  useEffect(() => {
-    async function fetchAppointment() {
-      if (!id) return;
-
-      const { data, error } = await supabase
-        .from("appointments")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (data) {
-        setAppointment(data);
-      }
-      setLoading(false);
-    }
-    fetchAppointment();
-  }, [id, supabase]);
+  // ... useEffect ...
 
   const updateStatus = async (newStatus: string) => {
+    // ... existing implementation
     const { error } = await supabase
       .from("appointments")
       .update({ status: newStatus })
@@ -63,6 +25,23 @@ export default function AppointmentDetailPage({
     if (!error) {
       setAppointment({ ...appointment, status: newStatus });
       router.refresh();
+    }
+  };
+
+  const handleDelete = async () => {
+    if (
+      !confirm(
+        "¿Estás segura de que quieres ELIMINAR definitivamente esta cita? Esta acción no se puede deshacer.",
+      )
+    )
+      return;
+
+    try {
+      await deleteAppointment(parseInt(id));
+      router.push("/admin");
+    } catch (error) {
+      alert("Error eliminando la cita");
+      console.error(error);
     }
   };
 
