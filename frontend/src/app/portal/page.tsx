@@ -238,7 +238,10 @@ export default function PortalDashboard() {
           Acciones Rápidas
         </h3>
         <div className="grid md:grid-cols-3 gap-6">
-          <button className="bg-white py-8 px-6 rounded-2xl shadow-sm border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all group flex flex-col items-center text-center">
+          <Link
+            href="/portal/agendar"
+            className="bg-white py-8 px-6 rounded-2xl shadow-sm border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all group flex flex-col items-center text-center"
+          >
             <div className="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <PlusIcon className="w-6 h-6 stroke-[3px]" />
             </div>
@@ -246,9 +249,12 @@ export default function PortalDashboard() {
             <p className="text-xs text-gray-400 mt-1 font-medium">
               Busca un espacio en la agenda
             </p>
-          </button>
+          </Link>
 
-          <button className="bg-white py-8 px-6 rounded-2xl shadow-sm border border-gray-100 hover:border-purple-200 hover:shadow-md transition-all group flex flex-col items-center text-center">
+          <a
+            href="mailto:hola@dravillabon.com"
+            className="bg-white py-8 px-6 rounded-2xl shadow-sm border border-gray-100 hover:border-purple-200 hover:shadow-md transition-all group flex flex-col items-center text-center"
+          >
             <div className="w-14 h-14 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <ChatBubbleLeftRightIcon className="w-6 h-6 stroke-[2px]" />
             </div>
@@ -256,9 +262,12 @@ export default function PortalDashboard() {
             <p className="text-xs text-gray-400 mt-1 font-medium">
               Envía un mensaje directo
             </p>
-          </button>
+          </a>
 
-          <button className="bg-white py-8 px-6 rounded-2xl shadow-sm border border-gray-100 hover:border-teal-200 hover:shadow-md transition-all group flex flex-col items-center text-center">
+          <Link
+            href="/portal/recursos"
+            className="bg-white py-8 px-6 rounded-2xl shadow-sm border border-gray-100 hover:border-teal-200 hover:shadow-md transition-all group flex flex-col items-center text-center"
+          >
             <div className="w-14 h-14 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <BookOpenIcon className="w-6 h-6 stroke-[2px]" />
             </div>
@@ -266,7 +275,7 @@ export default function PortalDashboard() {
             <p className="text-xs text-gray-400 mt-1 font-medium">
               Lecturas y ejercicios
             </p>
-          </button>
+          </Link>
         </div>
       </div>
 
