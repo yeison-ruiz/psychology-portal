@@ -36,3 +36,18 @@ export async function updateAppointmentStatus(id: number, status: string) {
 
   revalidatePath("/admin");
 }
+
+export async function deleteAppointment(id: number) {
+  const supabase = await getSupabase();
+
+  const { error } = await supabase
+    .from("appointments")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath("/admin");
+}

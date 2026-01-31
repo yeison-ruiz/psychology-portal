@@ -13,6 +13,7 @@ import {
   EnvelopeIcon,
   PhoneIcon,
   CalendarIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 
 // Helper to format currency
@@ -287,6 +288,16 @@ export default function AppointmentDetailPage({
                   </button>
                 </div>
               )}
+
+              <div className="pt-4 border-t border-gray-100 mt-4">
+                <button
+                  onClick={handleDelete}
+                  className="w-full text-gray-400 hover:text-red-500 text-xs font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-all"
+                >
+                  <TrashIcon className="w-4 h-4" />
+                  Eliminar Cita Definitivamente
+                </button>
+              </div>
             </div>
           </div>
 
