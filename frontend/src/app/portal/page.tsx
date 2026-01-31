@@ -11,6 +11,7 @@ import {
   CheckCircleIcon,
   CalendarIcon,
   ClockIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -169,13 +170,10 @@ export default function PortalDashboard() {
       {nextAppointment ? (
         <div className="bg-white rounded-3xl p-3 shadow-sm border border-gray-100">
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* Left Image Area */}
-            <div className="h-56 lg:h-auto lg:w-[35%] bg-gradient-to-b from-blue-300 to-blue-600 rounded-2xl relative overflow-hidden flex items-end p-6">
-              <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mixed-blend-overlay"></div>
-              <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-500 rounded-full blur-3xl opacity-50"></div>
-              <div className="absolute top-10 right-10 w-32 h-32 bg-white rounded-full blur-2xl opacity-20"></div>
-
-              <div className="relative z-10 bg-white/90 backdrop-blur-sm text-blue-900 text-[10px] font-extrabold uppercase tracking-widest px-4 py-1.5 rounded-md shadow-lg">
+            {/* Left Image Area or User Placeholder */}
+            <div className="h-56 lg:h-auto lg:w-[35%] bg-blue-50 rounded-2xl relative overflow-hidden flex items-center justify-center border border-blue-100">
+              <UserCircleIcon className="w-32 h-32 text-blue-200" />
+              <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-blue-900 text-[10px] font-extrabold uppercase tracking-widest px-4 py-1.5 rounded-md shadow-sm border border-blue-100">
                 Próxima Sesión
               </div>
             </div>
