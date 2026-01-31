@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { updateAppointmentStatus } from "./actions";
+import { updateAppointmentStatus, deleteAppointment } from "./actions";
 
 export default function AdminDashboard() {
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -197,10 +197,19 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td className="px-8 py-4 text-right flex justify-end gap-2">
+                        <button
+                          onClick={() =>
+                            router.push(`/admin/solicitudes/${apt.id}`)
+                          }
+                          className="bg-gray-50 text-gray-600 px-3 py-1 rounded text-[10px] font-bold uppercase hover:bg-gray-100 transition-colors border border-gray-200 flex items-center gap-1"
+                        >
+                          👁️ Ver
+                        </button>
                         {apt.status === "pending" && (
                           <>
                             <button
-                              onClick={async () => {
+                              onClick={async (e) => {
+                                e.stopPropagation();
                                 if (!confirm("¿Confirmar esta cita?")) return;
                                 await updateAppointmentStatus(
                                   apt.id,
@@ -213,7 +222,8 @@ export default function AdminDashboard() {
                               Confirmar
                             </button>
                             <button
-                              onClick={async () => {
+                              onClick={async (e) => {
+                                e.stopPropagation();
                                 if (!confirm("¿Cancelar esta cita?")) return;
                                 await updateAppointmentStatus(
                                   apt.id,
@@ -234,6 +244,23 @@ export default function AdminDashboard() {
                               : "Cita Cancelada"}
                           </span>
                         )}
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (
+                              !confirm(
+                                "¿Estás segura de eliminar esta cita definitivamente?",
+                              )
+                            )
+                              return;
+                            await deleteAppointment(apt.id);
+                            window.location.reload();
+                          }}
+                          className="ml-2 text-gray-400 hover:text-red-500 transition-colors"
+                          title="Eliminar definitivamente"
+                        >
+                          🗑️
+                        </button>
                       </td>
                     </tr>
                   );

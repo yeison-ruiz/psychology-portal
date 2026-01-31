@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { updateAppointmentStatus, deleteAppointment } from "../../actions";
 import {
   CalendarDaysIcon,
   ClockIcon,
@@ -13,16 +14,8 @@ import {
   EnvelopeIcon,
   PhoneIcon,
   CalendarIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
-
-// Helper to format currency
-const formatPrice = (amount: number) => {
-  return new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-    minimumFractionDigits: 0,
-  }).format(amount);
-};
 
 export default function AppointmentDetailPage({
   params,
@@ -35,25 +28,10 @@ export default function AppointmentDetailPage({
   const supabase = createClient();
   const id = params.id;
 
-  useEffect(() => {
-    async function fetchAppointment() {
-      if (!id) return;
-
-      const { data, error } = await supabase
-        .from("appointments")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (data) {
-        setAppointment(data);
-      }
-      setLoading(false);
-    }
-    fetchAppointment();
-  }, [id, supabase]);
+  // ... useEffect ...
 
   const updateStatus = async (newStatus: string) => {
+    // ... existing implementation
     const { error } = await supabase
       .from("appointments")
       .update({ status: newStatus })
@@ -62,6 +40,23 @@ export default function AppointmentDetailPage({
     if (!error) {
       setAppointment({ ...appointment, status: newStatus });
       router.refresh();
+    }
+  };
+
+  const handleDelete = async () => {
+    if (
+      !confirm(
+        "¿Estás segura de que quieres ELIMINAR definitivamente esta cita? Esta acción no se puede deshacer.",
+      )
+    )
+      return;
+
+    try {
+      await deleteAppointment(parseInt(id));
+      router.push("/admin");
+    } catch (error) {
+      alert("Error eliminando la cita");
+      console.error(error);
     }
   };
 
@@ -287,6 +282,16 @@ export default function AppointmentDetailPage({
                   </button>
                 </div>
               )}
+
+              <div className="pt-4 border-t border-gray-100 mt-4">
+                <button
+                  onClick={handleDelete}
+                  className="w-full text-gray-400 hover:text-red-500 text-xs font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-all"
+                >
+                  <TrashIcon className="w-4 h-4" />
+                  Eliminar Cita Definitivamente
+                </button>
+              </div>
             </div>
           </div>
 

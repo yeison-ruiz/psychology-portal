@@ -11,7 +11,9 @@ import {
   CheckCircleIcon,
   CalendarIcon,
   ClockIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function PortalDashboard() {
@@ -169,13 +171,18 @@ export default function PortalDashboard() {
       {nextAppointment ? (
         <div className="bg-white rounded-3xl p-3 shadow-sm border border-gray-100">
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* Left Image Area */}
-            <div className="h-56 lg:h-auto lg:w-[35%] bg-gradient-to-b from-blue-300 to-blue-600 rounded-2xl relative overflow-hidden flex items-end p-6">
-              <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mixed-blend-overlay"></div>
-              <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-500 rounded-full blur-3xl opacity-50"></div>
-              <div className="absolute top-10 right-10 w-32 h-32 bg-white rounded-full blur-2xl opacity-20"></div>
+            {/* Left Image Area or User Placeholder */}
+            <div className="h-56 lg:h-auto lg:w-[35%] bg-gray-100 rounded-2xl relative overflow-hidden group">
+              <Image
+                src="https://images.unsplash.com/photo-1527689368864-3a821dbccc34?q=80&w=2540&auto=format&fit=crop"
+                alt="Consultorio Virtual"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-blue-900/20 mix-blend-multiply"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
 
-              <div className="relative z-10 bg-white/90 backdrop-blur-sm text-blue-900 text-[10px] font-extrabold uppercase tracking-widest px-4 py-1.5 rounded-md shadow-lg">
+              <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-blue-900 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-sm">
                 Próxima Sesión
               </div>
             </div>
