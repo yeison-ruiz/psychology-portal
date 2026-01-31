@@ -28,9 +28,6 @@ const appointmentSchema = z.object({
   }),
   date: z.string().min(1, "La fecha es requerida"),
   time: z.string().min(1, "La hora es requerida"),
-  type: z.enum(["online", "presencial"], {
-    errorMap: () => ({ message: "Selecciona una modalidad" }),
-  }),
   notes: z.string().optional(),
 });
 
@@ -61,22 +58,12 @@ export default function AgendarPage() {
   } = useForm<AppointmentForm>({
     resolver: zodResolver(appointmentSchema),
     defaultValues: {
-      type: "online",
       serviceType: undefined,
     },
   });
 
   const watchDate = watch("date");
   const watchTime = watch("time");
-  const watchType = watch("type");
-  const watchService = watch("serviceType");
-
-  // Effect: Auto-set modality based on service
-  useEffect(() => {
-    if (watchService === "Orientación Online") {
-      setValue("type", "online");
-    }
-  }, [watchService, setValue]);
 
   useEffect(() => {
     async function getUser() {
@@ -98,22 +85,12 @@ export default function AgendarPage() {
     try {
       const scheduledAt = new Date(`${data.date}T${data.time}:00`);
 
-      // Combine Service Type into notes or specific column if exists.
-      // Since 'type' in DB is text, we can store the formatted type there or keep 'online/presencial' in type and put service in notes.
-      // User requested "the psychologist works with these three themes". I'll put the SERVICE NAME as the main type for display,
-      // but we need to track online/presencial.
-      // Actually, 'type' column is just text. Let's store the Service Name there, as it's more descriptive.
-      // But we lose the 'online' vs 'presencial' bit if we just overwrite.
-      // Let's store: type = "Service Name (Modalidad)"
-
-      const fullTypeString = `${data.serviceType} - ${data.type === "online" ? "Virtual" : "Presencial"}`;
-
       const { error } = await supabase.from("appointments").insert({
         user_id: user.id,
         scheduled_at: scheduledAt.toISOString(),
-        type: data.serviceType, // Storing the service name directly as requested
+        type: data.serviceType,
         status: "pending",
-        notes: `Modalidad: ${data.type}. ${data.notes || ""}`, // Append modality to notes
+        notes: `Modalidad: Virtual. ${data.notes || ""}`,
         guest_name: user.user_metadata?.full_name,
         guest_email: user.email,
       });
@@ -232,49 +209,7 @@ export default function AgendarPage() {
           )}
         </div>
 
-        {/* 4. Modalidad */}
-        {/* Only show modality choice if it's NOT explicitly Online Orientation (although user can choose) */}
-        <div
-          className={`space-y-3 ${watchService === "Orientación Online" ? "opacity-50 pointer-events-none" : ""}`}
-        >
-          <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide">
-            4. Modalidad
-          </label>
-          <div className="grid grid-cols-2 gap-4">
-            <label
-              className={`cursor-pointer border p-4 rounded-xl flex items-center justify-center gap-3 transition-all ${
-                watchType === "online"
-                  ? "bg-blue-50 border-blue-500 text-blue-700"
-                  : "border-gray-200 hover:bg-gray-50"
-              }`}
-            >
-              <input
-                type="radio"
-                value="online"
-                {...register("type")}
-                className="hidden"
-              />
-              <span className="font-bold">Virtual</span>
-            </label>
-            <label
-              className={`cursor-pointer border p-4 rounded-xl flex items-center justify-center gap-3 transition-all ${
-                watchType === "presencial"
-                  ? "bg-blue-50 border-blue-500 text-blue-700"
-                  : "border-gray-200 hover:bg-gray-50"
-              }`}
-            >
-              <input
-                type="radio"
-                value="presencial"
-                {...register("type")}
-                className="hidden"
-              />
-              <span className="font-bold">Presencial</span>
-            </label>
-          </div>
-        </div>
-
-        {/* 5. Notas */}
+        {/* 4. Notas */}
         <div className="space-y-3">
           <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide">
             Notas Adicionales (Opcional)
