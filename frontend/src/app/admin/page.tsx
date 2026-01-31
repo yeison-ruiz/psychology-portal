@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { updateAppointmentStatus } from "./actions";
+import { updateAppointmentStatus, deleteAppointment } from "./actions";
 
 export default function AdminDashboard() {
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -244,6 +244,23 @@ export default function AdminDashboard() {
                               : "Cita Cancelada"}
                           </span>
                         )}
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (
+                              !confirm(
+                                "¿Estás segura de eliminar esta cita definitivamente?",
+                              )
+                            )
+                              return;
+                            await deleteAppointment(apt.id);
+                            window.location.reload();
+                          }}
+                          className="ml-2 text-gray-400 hover:text-red-500 transition-colors"
+                          title="Eliminar definitivamente"
+                        >
+                          🗑️
+                        </button>
                       </td>
                     </tr>
                   );
