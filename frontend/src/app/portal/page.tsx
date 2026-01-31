@@ -174,6 +174,7 @@ export default function PortalDashboard() {
                   <h3 className="font-bold text-2xl text-gray-900 mb-1 capitalize">
                     {nextAppointment.type}
                   </h3>
+                  {/* Show modality if stored in notes, naive check for now */}
                   <p className="text-gray-500 font-medium text-sm">
                     {formatDate(nextAppointment.scheduled_at)} -{" "}
                     {formatTime(nextAppointment.scheduled_at)}
@@ -181,7 +182,7 @@ export default function PortalDashboard() {
                 </div>
                 <span className="bg-green-50 text-green-700 px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wide flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                  CONFIRMADAC
+                  CONFIRMADA
                 </span>
               </div>
 
