@@ -13,6 +13,7 @@ import {
   ClockIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function PortalDashboard() {
@@ -171,19 +172,17 @@ export default function PortalDashboard() {
         <div className="bg-white rounded-3xl p-3 shadow-sm border border-gray-100">
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Left Image Area or User Placeholder */}
-            <div className="h-56 lg:h-auto lg:w-[35%] bg-gradient-to-br from-[#F5F7FF] to-[#Eef2ff] rounded-2xl relative overflow-hidden flex items-center justify-center border border-indigo-50/50">
-              {/* Decorative background elements */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-100 rounded-full blur-2xl opacity-30 translate-y-1/2 -translate-x-1/2"></div>
+            <div className="h-56 lg:h-auto lg:w-[35%] bg-gray-100 rounded-2xl relative overflow-hidden group">
+              <Image
+                src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2670&auto=format&fit=crop"
+                alt="Sesión Virtual"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-blue-900/20 mix-blend-multiply"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
 
-              <div className="bg-white p-6 rounded-full shadow-sm ring-8 ring-white/40 relative z-10">
-                <UserCircleIcon
-                  className="w-20 h-20 text-indigo-200"
-                  strokeWidth={1.5}
-                />
-              </div>
-
-              <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-indigo-900 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-sm border border-indigo-50 z-20">
+              <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-blue-900 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-sm">
                 Próxima Sesión
               </div>
             </div>
