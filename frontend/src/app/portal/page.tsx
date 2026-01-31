@@ -9,59 +9,100 @@ import {
   ChatBubbleLeftRightIcon,
   BookOpenIcon,
   CheckCircleIcon,
-  VideoCameraSlashIcon,
+  CalendarIcon,
+  ClockIcon,
 } from "@heroicons/react/24/outline";
-import { CheckBadgeIcon } from "@heroicons/react/24/solid";
-import Image from "next/image";
+import Link from "next/link";
 
 export default function PortalDashboard() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [nextAppointment, setNextAppointment] = useState<any>(null);
+  const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const supabase = createClient();
 
   useEffect(() => {
-    async function getUser() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
-      setLoading(false);
+    async function getData() {
+      try {
+        // 1. Get User
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (user) {
+          setUser(user);
+
+          // 2. Fetch Next Appointment (Future, Confirmed)
+          const { data: nextAppt } = await supabase
+            .from("appointments")
+            .select("*")
+            .eq("user_id", user.id)
+            .gte("scheduled_at", new Date().toISOString())
+            .eq("status", "confirmed")
+            .order("scheduled_at", { ascending: true })
+            .limit(1)
+            .single();
+
+          setNextAppointment(nextAppt);
+
+          // 3. Fetch Recent Activity (Last 5 appointments)
+          const { data: activity } = await supabase
+            .from("appointments")
+            .select("*")
+            .eq("user_id", user.id)
+            .order("scheduled_at", { ascending: false })
+            .limit(5);
+
+          setRecentActivity(activity || []);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
     }
-    getUser();
+    getData();
   }, [supabase]);
 
-  // Mock Data
-  const nextSession = {
-    type: "Terapia Individual",
-    date: "Martes, 30 de Enero", // Hoy
-    time: "10:00 AM",
-    doctor: "Dra. Ana Martínez", // Usando nombre ejemplo imagen aunque sea Villabon
-    status: "CONFIRMADA",
-    meetLink: "#",
+  // Helper formats
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("es-CO", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    });
   };
 
-  const activities = [
-    {
-      id: 1,
-      month: "NOV",
-      day: "02",
-      title: "Terapia Cognitivo-Conductual",
-      sub: "15:00 PM • Videollamada",
-      status: "Agendada",
-      statusColor: "bg-blue-100 text-blue-600",
-      icon: <VideoCameraIcon className="w-5 h-5 text-gray-400" />,
-    },
-    {
-      id: 2,
-      month: "OCT",
-      day: "10",
-      title: "Terapia Individual",
-      sub: "10:00 AM • Presencial",
-      status: "Completada",
-      statusColor: "bg-gray-100 text-gray-600",
-      icon: <CheckCircleIcon className="w-5 h-5 text-gray-400" />,
-    },
-  ];
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString("es-CO", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const getMonthAndDay = (dateString: string) => {
+    const date = new Date(dateString);
+    return {
+      month: date
+        .toLocaleDateString("es-CO", { month: "short" })
+        .toUpperCase()
+        .replace(".", ""),
+      day: date.getDate(),
+    };
+  };
+
+  if (loading) {
+    return (
+      <div className="flex h-full items-center justify-center p-10">
+        <div className="animate-pulse flex flex-col items-center gap-4">
+          <div className="h-12 w-12 bg-gray-200 rounded-full"></div>
+          <div className="h-4 w-48 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-10">
@@ -79,7 +120,7 @@ export default function PortalDashboard() {
           <div className="flex items-center gap-3 pl-6 border-l border-gray-200">
             <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200">
               {/* Avatar Placeholder */}
-              <div className="w-full h-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+              <div className="w-full h-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold uppercase">
                 {user?.user_metadata?.full_name?.[0] || "U"}
               </div>
             </div>
@@ -112,64 +153,84 @@ export default function PortalDashboard() {
       </div>
 
       {/* 3. Next Session Card */}
-      <div className="bg-white rounded-3xl p-3 shadow-sm border border-gray-100">
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Left Image Area */}
-          <div className="h-56 lg:h-auto lg:w-[35%] bg-gradient-to-b from-blue-300 to-blue-600 rounded-2xl relative overflow-hidden flex items-end p-6">
-            {/* Simulate Wavy Background with gradients */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mixed-blend-overlay"></div>
-            <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-500 rounded-full blur-3xl opacity-50"></div>
-            <div className="absolute top-10 right-10 w-32 h-32 bg-white rounded-full blur-2xl opacity-20"></div>
+      {nextAppointment ? (
+        <div className="bg-white rounded-3xl p-3 shadow-sm border border-gray-100">
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Left Image Area */}
+            <div className="h-56 lg:h-auto lg:w-[35%] bg-gradient-to-b from-blue-300 to-blue-600 rounded-2xl relative overflow-hidden flex items-end p-6">
+              <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mixed-blend-overlay"></div>
+              <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-500 rounded-full blur-3xl opacity-50"></div>
+              <div className="absolute top-10 right-10 w-32 h-32 bg-white rounded-full blur-2xl opacity-20"></div>
 
-            <div className="relative z-10 bg-white/90 backdrop-blur-sm text-blue-900 text-[10px] font-extrabold uppercase tracking-widest px-4 py-1.5 rounded-md shadow-lg">
-              Próxima Sesión
-            </div>
-          </div>
-
-          {/* Right Content */}
-          <div className="flex-1 py-4 pr-4 flex flex-col justify-between gap-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-bold text-2xl text-gray-900 mb-1">
-                  {nextSession.type}
-                </h3>
-                <p className="text-gray-500 font-medium text-sm">
-                  {nextSession.date} - {nextSession.time}
-                </p>
+              <div className="relative z-10 bg-white/90 backdrop-blur-sm text-blue-900 text-[10px] font-extrabold uppercase tracking-widest px-4 py-1.5 rounded-md shadow-lg">
+                Próxima Sesión
               </div>
-              <span className="bg-green-50 text-green-700 px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wide flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                {nextSession.status}
-              </span>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-orange-100 overflow-hidden relative border-2 border-white shadow-sm shrink-0">
-                {/* Doctor Avatar */}
-                <div className="w-full h-full flex items-center justify-center text-orange-600 font-bold">
-                  DM
+            {/* Right Content */}
+            <div className="flex-1 py-4 pr-4 flex flex-col justify-between gap-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-bold text-2xl text-gray-900 mb-1 capitalize">
+                    {nextAppointment.type}
+                  </h3>
+                  <p className="text-gray-500 font-medium text-sm">
+                    {formatDate(nextAppointment.scheduled_at)} -{" "}
+                    {formatTime(nextAppointment.scheduled_at)}
+                  </p>
+                </div>
+                <span className="bg-green-50 text-green-700 px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wide flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                  CONFIRMADAC
+                </span>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-orange-100 overflow-hidden relative border-2 border-white shadow-sm shrink-0">
+                  <div className="w-full h-full flex items-center justify-center text-orange-600 font-bold">
+                    DM
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-gray-900">
+                    Dra. Villabón
+                  </p>
+                  <p className="text-xs text-gray-500">Psicóloga Clínica</p>
                 </div>
               </div>
-              <div>
-                <p className="text-sm font-bold text-gray-900">
-                  {nextSession.doctor}
-                </p>
-                <p className="text-xs text-gray-500">Psicóloga Clínica</p>
-              </div>
-            </div>
 
-            <div className="border-t border-gray-100 pt-6">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-200 transition-all active:scale-95 w-fit">
-                <VideoCameraIcon className="w-5 h-5" />
-                Unirse a Google Meet
-              </button>
-              <p className="text-xs text-gray-400 mt-3 font-medium">
-                El enlace se activará 5 minutos antes.
-              </p>
+              <div className="border-t border-gray-100 pt-6">
+                <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-200 transition-all active:scale-95 w-fit">
+                  <VideoCameraIcon className="w-5 h-5" />
+                  Unirse a Google Meet
+                </button>
+                <p className="text-xs text-gray-400 mt-3 font-medium">
+                  El enlace se activará 5 minutos antes.
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-white rounded-3xl p-10 shadow-sm border border-gray-100 text-center flex flex-col items-center justify-center min-h-[300px]">
+          <div className="w-20 h-20 bg-blue-50 text-blue-400 rounded-full flex items-center justify-center mb-6">
+            <CalendarIcon className="w-10 h-10" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
+            No tienes sesiones próximas
+          </h3>
+          <p className="text-gray-500 mb-8 max-w-sm mx-auto">
+            Parece que estás al día con tus sesiones. ¿Te gustaría agendar una
+            nueva cita para continuar tu proceso?
+          </p>
+          <Link
+            href="/portal/agendar"
+            className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95"
+          >
+            Agendar Nueva Cita
+          </Link>
+        </div>
+      )}
 
       {/* 4. Quick Actions */}
       <div>
@@ -177,7 +238,6 @@ export default function PortalDashboard() {
           Acciones Rápidas
         </h3>
         <div className="grid md:grid-cols-3 gap-6">
-          {/* Action 1 */}
           <button className="bg-white py-8 px-6 rounded-2xl shadow-sm border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all group flex flex-col items-center text-center">
             <div className="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <PlusIcon className="w-6 h-6 stroke-[3px]" />
@@ -188,7 +248,6 @@ export default function PortalDashboard() {
             </p>
           </button>
 
-          {/* Action 2 */}
           <button className="bg-white py-8 px-6 rounded-2xl shadow-sm border border-gray-100 hover:border-purple-200 hover:shadow-md transition-all group flex flex-col items-center text-center">
             <div className="w-14 h-14 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <ChatBubbleLeftRightIcon className="w-6 h-6 stroke-[2px]" />
@@ -199,7 +258,6 @@ export default function PortalDashboard() {
             </p>
           </button>
 
-          {/* Action 3 */}
           <button className="bg-white py-8 px-6 rounded-2xl shadow-sm border border-gray-100 hover:border-teal-200 hover:shadow-md transition-all group flex flex-col items-center text-center">
             <div className="w-14 h-14 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <BookOpenIcon className="w-6 h-6 stroke-[2px]" />
@@ -224,46 +282,59 @@ export default function PortalDashboard() {
         </div>
 
         <div className="space-y-1">
-          {activities.map((item) => (
-            <div
-              key={item.id}
-              className="group p-4 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-6 cursor-pointer"
-            >
-              {/* Date Box */}
-              <div className="flex-shrink-0 w-14 h-14 bg-gray-50 rounded-lg flex flex-col items-center justify-center border border-gray-100 group-hover:bg-white group-hover:border-gray-200 transition-colors">
-                <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
-                  {item.month}
-                </span>
-                <span className="text-xl font-bold text-gray-900 leading-none mt-0.5">
-                  {item.day}
-                </span>
-              </div>
-
-              {/* Info */}
-              <div className="flex-1">
-                <h4 className="font-bold text-gray-900 text-sm md:text-base">
-                  {item.title}
-                </h4>
-                <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-2 font-medium">
-                  {item.sub}
-                </p>
-              </div>
-
-              {/* Right Actions */}
-              <div className="flex items-center gap-4">
-                <span
-                  className={`hidden md:inline-block px-3 py-1.5 rounded-md text-xs font-bold ${item.statusColor}`}
+          {recentActivity.length > 0 ? (
+            recentActivity.map((item) => {
+              const { month, day } = getMonthAndDay(item.scheduled_at);
+              return (
+                <div
+                  key={item.id}
+                  className="group p-4 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-6 cursor-pointer"
                 >
-                  {item.status}
-                </span>
-                <button className="text-gray-300 hover:text-gray-600">
-                  <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                    {item.icon}
+                  <div className="flex-shrink-0 w-14 h-14 bg-gray-50 rounded-lg flex flex-col items-center justify-center border border-gray-100 group-hover:bg-white group-hover:border-gray-200 transition-colors">
+                    <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                      {month}
+                    </span>
+                    <span className="text-xl font-bold text-gray-900 leading-none mt-0.5">
+                      {day}
+                    </span>
                   </div>
-                </button>
-              </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-gray-900 text-sm md:text-base capitalize">
+                      {item.type}
+                    </h4>
+                    <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-2 font-medium">
+                      {formatTime(item.scheduled_at)} •{" "}
+                      {item.status === "confirmed"
+                        ? "Videollamada"
+                        : "Presencial"}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span
+                      className={`hidden md:inline-block px-3 py-1.5 rounded-md text-xs font-bold ${
+                        item.status === "confirmed"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {item.status === "confirmed" ? "Agendada" : item.status}
+                    </span>
+                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
+                      {item.status === "confirmed" ? (
+                        <VideoCameraIcon className="w-4 h-4" />
+                      ) : (
+                        <CheckCircleIcon className="w-4 h-4" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="text-center py-8 text-gray-400 text-sm">
+              No hay actividad reciente.
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>
