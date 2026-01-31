@@ -137,20 +137,7 @@ export default function PortalDashboard() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="font-sans text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">
-            Hola,{" "}
-            {(() => {
-              const name = user?.user_metadata?.full_name;
-              if (!name) return "Paciente";
-              const parts = name.split(" ");
-              // If first part is a title (Dr, Dra, etc), take the second part
-              if (
-                parts.length > 1 &&
-                /^(dr|dra|lic|ing|profa?)\.?$/i.test(parts[0])
-              ) {
-                return parts[1];
-              }
-              return parts[0];
-            })()}
+            Hola, {user?.user_metadata?.full_name?.split(" ")[0] || "Paciente"}
           </h1>
           <p className="text-gray-500 font-medium">
             Bienvenido a tu espacio de bienestar personal.
